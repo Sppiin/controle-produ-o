@@ -1,0 +1,11 @@
+CONTROLE DE TINTAS v2.2 — TESTE EXPERIMENTAL
+
+1. Hospede a pasta por HTTPS (ou localhost). Abrir HTML com file:// pode impedir que os modelos carreguem.
+2. Ao abrir no mesmo domínio das versões anteriores, os cadastros de tinta e lotes existentes são mantidos no localStorage. Faça backup primeiro.
+3. Selecione tinta, foto do lote, foto da quantidade; clique em Analisar as duas fotos. Confira os campos antes de confirmar.
+4. Lote: Tesseract.js. Quantidade manuscrita: PaddleOCR.js PP-OCRv6 via CDN, executado no navegador.
+5. Na primeira utilização são baixados arquivos de bibliotecas e modelos públicos. As fotos não são enviadas pela aplicação para API de reconhecimento. Para ambientes industriais confidenciais, revise segurança, hospedagem e dependências de terceiros.
+6. O modelo ainda NÃO foi validado com caligrafias de produção reais e pode não interpretar 198; se falhar, o programa exige entrada manual.
+7. Faça backup dos registros regularmente. O armazenamento é local a cada navegador/dispositivo.
+
+Não use como única fonte de controle de produção sem validação operacional.

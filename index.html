@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#102b36" />
+  <meta name="description" content="Registro de baldes embalados por tinta e lote, com leitura de imagens no dispositivo." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>Controle de Produção | Tintas — v2.2</title>
+  <style>
+    :root{color-scheme:light;--navy:#102b36;--teal:#087d78;--bg:#f3f6f7;--ink:#1c2b31;--muted:#60737b;--line:#dbe4e6;--white:#fff;--red:#ad3434}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}input,select{width:100%;background:white;border:1px solid #b9c9cd;border-radius:10px;padding:12px;color:var(--ink)}input:focus,select:focus{outline:2px solid #72b9ad;outline-offset:1px}input[type=file]{padding:9px;font-size:13px}input[type=date]{min-height:44px}
+    header{background:var(--navy);color:white;padding:24px max(18px,calc((100vw - 1000px)/2));}header small{color:#a9ced0;text-transform:uppercase;letter-spacing:.12em;font-weight:750;font-size:11px}header h1{margin:7px 0 5px;font-size:25px}header p{margin:0;color:#c3d6da;font-size:14px;line-height:1.5}
+    main{max-width:1000px;margin:auto;padding:20px 16px 45px}.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px}.tabs button{background:#e4edef;color:#334c53;border:0;padding:11px 17px;border-radius:10px;font-weight:700;white-space:nowrap}.tabs button.active{color:white;background:var(--teal)}
+    section.page{display:none}section.page.active{display:block}.card{background:white;border:1px solid var(--line);box-shadow:0 3px 12px #102b3609;padding:18px;border-radius:16px;margin:0 0 16px}.card h2{font-size:18px;margin:0 0 15px}.card h3{font-size:15px;margin:0 0 9px}.hint{font-size:13px;line-height:1.55;color:var(--muted);margin:7px 0 13px}.label{display:block;font-size:13px;font-weight:750;margin:13px 0 7px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.kpi{border-radius:13px;padding:19px;background:#eaf5f3}.kpi small{display:block;color:#456f6b;font-weight:700;font-size:12px}.kpi strong{display:block;font-size:30px;margin:5px 0}.kpi span{color:#5e7777;font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}.btn{border:1px solid transparent;border-radius:10px;padding:11px 16px;font-weight:750;background:var(--teal);color:white}.btn.secondary{background:white;color:var(--navy);border-color:#afc3c7}.btn.danger{background:white;color:var(--red);border-color:#e5b8b8}.btn.ghost{background:#eaf2f2;color:var(--navy)}.btn.sm{padding:7px 11px;font-size:12px}
+    .photo{border:1px dashed #9db9bc;border-radius:13px;padding:15px;background:#f9fbfb}.photo strong{display:block;margin-bottom:4px}.photo img{display:none;max-width:100%;max-height:190px;object-fit:contain;margin:12px auto 0;border-radius:7px}.status{min-height:22px;font-size:13px;color:var(--teal);margin:9px 0 0}.notice{border-radius:10px;padding:12px 13px;background:#e8f4ef;color:#24614f;font-size:13px;line-height:1.5;margin:12px 0}.notice.warn{background:#fff0e9;color:#85411f}.notice.error{background:#ffeded;color:#922d2d}.notice[hidden]{display:none}.section-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.section-header h2{margin-bottom:8px}.pill{display:inline-block;border-radius:100px;background:#eaf5f3;color:#21645f;padding:5px 9px;font-size:11px;font-weight:750}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;border-bottom:1px solid var(--line);padding:12px 8px;white-space:nowrap}th{font-size:12px;color:#5d7077}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}.empty{color:var(--muted);font-size:14px;padding:20px 0;text-align:center}.record-btns{display:flex;gap:5px}.subtle{color:var(--muted);font-size:12px}.report-choice{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0;background:#fbfdfd}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px;line-height:1.5}.badge{display:inline-block;background:#fff2db;color:#775019;font-size:11px;border-radius:7px;padding:4px 8px}
+    .cropbox{display:none;margin:12px 0}.cropbox canvas{display:block;max-width:100%;width:100%;height:auto;touch-action:none;border-radius:8px;border:1px solid #adbbbe;cursor:crosshair}.cropbox .hint{margin:5px 0}.cropbox .actions{margin-top:8px}
+    @media(max-width:640px){.grid,.grid3{grid-template-columns:1fr}.card{padding:15px}header h1{font-size:22px}.tabs button{padding:11px 13px}.kpi strong{font-size:26px}}
+    @media print{header,.tabs,.actions,.no-print,.footer{display:none!important}main{padding:0}section.page{display:none!important}section.page#relatorios{display:block!important}.card{box-shadow:none;border:0;padding:0}.report-choice{border:0;padding:0}body{background:white;color:black}table{font-size:12px}.report-title{display:block!important}}
+  </style>
+</head>
+<body>
+<header><small>Produção industrial • Controle de embalados</small><h1>Controle de Tintas</h1><p>Uma quantidade final por lote. Fotos sem seleção manual, OCR local para lote e novo PaddleOCR para manuscritos.</p></header>
+<main>
+  <nav class="tabs no-print" aria-label="Seções do aplicativo">
+    <button class="active" data-page="painel">Painel</button><button data-page="registro">Novo registro</button><button data-page="historico">Histórico</button><button data-page="relatorios">Relatórios</button><button data-page="config">Configurações</button>
+  </nav>
+  <section id="painel" class="page active"><div class="grid3" id="kpis"></div><div class="card"><div class="section-header"><h2>Produção por tinta</h2><span class="pill">Total confirmado</span></div><div id="resumo"></div></div><div class="actions"><button class="btn" data-go="registro">+ Novo registro</button><button class="btn secondary" data-go="relatorios">Gerar relatório</button></div></section>
+  <section id="registro" class="page">
+    <div class="card"><h2>Cadastrar lote embalado</h2><p class="hint">Selecione a tinta. Tire apenas uma foto do campo do lote e outra apenas do campo da quantidade embalada. Não fotografe a formulação.</p>
+    <label class="label" for="tinta">1. Tinta</label><select id="tinta"></select>
+    <div class="grid" style="margin-top:16px">
+      <div class="photo"><strong>2. Foto do lote</strong><span class="subtle">Somente o número/identificação do lote</span><label class="label" for="fotoLote">Fotografar ou selecionar imagem</label><input id="fotoLote" type="file" accept="image/*" capture="environment"><div class="cropbox" id="cropLote"><p class="hint">Prévia da foto. A busca automática verifica quatro orientações, sem seleção manual.</p><canvas id="canvasLote"></canvas><div class="actions"><button type="button" class="btn secondary sm" id="rotLote">Girar 90°</button><button type="button" class="btn secondary sm" id="resetLote">Selecionar novamente</button></div></div><div id="statusLote" class="status"></div><button class="btn secondary sm" id="lerLote" type="button">Ler lote automaticamente</button></div>
+      <div class="photo"><strong>3. Foto da quantidade embalada</strong><span class="subtle">Somente o valor da quantidade final</span><label class="label" for="fotoQtd">Fotografar ou selecionar imagem</label><input id="fotoQtd" type="file" accept="image/*" capture="environment"><div class="cropbox" id="cropQtd"><p class="hint">Prévia da foto. O sistema procura automaticamente o campo de quantidade e usa PaddleOCR local para tentar ler o número manuscrito.</p><canvas id="canvasQtd"></canvas><div class="actions"><button type="button" class="btn secondary sm" id="rotQtd">Girar 90°</button><button type="button" class="btn secondary sm" id="resetQtd">Selecionar novamente</button></div></div><div id="statusQtd" class="status"></div><button class="btn secondary sm" id="lerQtd" type="button">Ler quantidade com PaddleOCR</button></div>
+    </div>
+    <div class="notice warn">Versão experimental 2.2: o PaddleOCR é gratuito e processa a fotografia no navegador. Na primeira utilização ele baixa bibliotecas e modelos (dezenas de MB). Não há garantia de reconhecer todo manuscrito: confira sempre os números antes de salvar. As fotos não são adicionadas ao histórico. Para maior privacidade, fotografe somente os dois campos necessários.</div><div class="actions"><button class="btn secondary" id="lerAmbas" type="button">Analisar as duas fotos automaticamente</button></div>
+    <div class="grid"><div><label class="label" for="lote">Número do lote (confirmar)</label><input id="lote" placeholder="Ex.: 2026-001" autocomplete="off" maxlength="80"></div><div><label class="label" for="quantidade">Baldes embalados (confirmar)</label><input id="quantidade" type="number" min="0" step="1" inputmode="numeric" placeholder="Ex.: 120"></div></div>
+    <label class="label" for="dataProducao">Data de produção/embalagem</label><input id="dataProducao" type="date">
+    <div id="alertaRegistro" class="notice" hidden></div>
+    <div class="actions"><button id="salvar" class="btn">Confirmar e salvar lote</button><button id="limpar" class="btn secondary">Limpar formulário</button></div>
+    </div>
+  </section>
+  <section id="historico" class="page"><div class="card"><h2>Histórico de lotes</h2><div class="grid"><div><label class="label" for="filtroTinta">Filtrar por tinta</label><select id="filtroTinta"></select></div><div><label class="label" for="buscaLote">Buscar número do lote</label><input id="buscaLote" placeholder="Digite para buscar"></div></div><div class="table-wrap" id="tabelaHistorico"></div></div></section>
+  <section id="relatorios" class="page"><div class="card"><div class="report-title" style="display:none"><h1>Relatório de produção — baldes embalados</h1></div><div class="section-header no-print"><h2>Relatórios</h2><span class="pill">Dados registrados</span></div><div class="grid no-print"><div><label class="label" for="relTinta">Tinta</label><select id="relTinta"></select></div><div><label class="label" for="relInicio">De (data)</label><input type="date" id="relInicio"></div><div><label class="label" for="relFim">Até (data)</label><input type="date" id="relFim"></div></div><div class="report-choice"><div class="subtle" id="relPeriodo"></div><h3 id="relTitulo">Relatório geral</h3><div id="relResumo"></div><div class="table-wrap" id="relTabela"></div></div><div class="actions no-print"><button class="btn" id="exportarCsv">Exportar CSV para Excel</button><button class="btn secondary" id="imprimir">Imprimir / salvar PDF</button></div></div></section>
+  <section id="config" class="page"><div class="card"><h2>Cadastro de tintas</h2><p class="hint">As tintas são escolhidas manualmente. O sistema nunca tenta descobrir a formulação.</p><div id="listaTintas"></div><div class="grid"><div><label class="label" for="novaTinta">Novo nome de tinta</label><input id="novaTinta" maxlength="80" placeholder="Ex.: Tinta D"></div><div style="align-self:end"><button id="adicionarTinta" class="btn">Adicionar tinta</button></div></div></div><div class="card"><h2>Backup e segurança</h2><p class="hint">Os dados ficam somente no armazenamento deste navegador/dispositivo. Limpar o navegador ou perder o celular pode apagá-los. Faça backups periódicos. Para uso por várias pessoas, será necessário um banco de dados corporativo com controle de acesso.</p><div class="actions"><button class="btn secondary" id="backup">Baixar backup JSON</button><label class="btn secondary" for="restaurar" style="cursor:pointer">Restaurar backup JSON</label><input id="restaurar" type="file" accept="application/json,.json" style="display:none"></div><p class="hint">Lote: Tesseract.js local. Manuscrito: PaddleOCR.js (PP-OCRv6) de código aberto, com processamento no navegador após download inicial. As dependências e o modelo são baixados de servidores públicos, portanto podem revelar metadados de acesso; o aplicativo não envia intencionalmente as fotos a eles. Para implantação empresarial, hospede as dependências internamente e faça auditoria de rede.</p></div></section>
+  <p class="footer no-print">Protótipo v2.2 • Sem contas de usuário • Sem sincronização • PaddleOCR baixado na primeira utilização; imagens analisadas localmente. Confirme todos os resultados.</p>
+</main>
+<script>
+(()=>{'use strict';
+const KEY='controle_tintas_v1'; const DEFAULT={tintas:['Tinta A','Tinta B','Tinta C'],registros:[]};
+let db;try{const raw=localStorage.getItem(KEY);db=raw?JSON.parse(raw):structuredClone(DEFAULT);if(!Array.isArray(db.tintas)||!Array.isArray(db.registros))throw Error();}catch{db=JSON.parse(JSON.stringify(DEFAULT));}
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const today=()=>new Date().toLocaleDateString('en-CA');
+const normalize=s=>String(s).normalize('NFKC').trim().replace(/\s+/g,' ').toUpperCase();const lotKey=(t,l)=>normalize(t)+'::'+normalize(l);const same=(r,t,l)=>lotKey(r.tinta,r.lote)===lotKey(t,l);const fmt=n=>n.toLocaleString('pt-BR');const qtd=r=>Number(r.quantidade)||0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(e){alert('Não foi possível salvar neste navegador. Exporte backup e verifique armazenamento disponível.');return false}}
+function show(page){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===page));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));if(page==='relatorios')renderReports();if(page==='historico')renderHistory();window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('[data-page]').forEach(x=>x.addEventListener('click',()=>show(x.dataset.page)));document.querySelectorAll('[data-go]').forEach(x=>x.addEventListener('click',()=>show(x.dataset.go)));
+function options(select,all=false){const prev=select.value;select.innerHTML=(all?'<option value="">Todas as tintas</option>':'')+db.tintas.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');if([...select.options].some(o=>o.value===prev))select.value=prev}
+function render(){options($('tinta'));options($('filtroTinta'),true);options($('relTinta'),true);const total=db.registros.reduce((s,r)=>s+qtd(r),0);$('kpis').innerHTML=[[fmt(total),'Baldes embalados','Total de todos os produtos'],[fmt(db.registros.length),'Lotes únicos','Sem duplicidades por tinta'],[fmt(db.tintas.filter(t=>db.registros.some(r=>r.tinta===t)).length),'Tintas produzidas','Com ao menos um lote']].map(([v,l,d])=>`<div class="kpi"><small>${l}</small><strong>${v}</strong><span>${d}</span></div>`).join('');$('resumo').innerHTML=db.tintas.map(t=>{let rs=db.registros.filter(r=>r.tinta===t);return `<div class="section-header" style="padding:12px 0;border-bottom:1px solid var(--line)"><div><b>${esc(t)}</b><div class="subtle">${rs.length} lote(s)</div></div><b>${fmt(rs.reduce((s,r)=>s+qtd(r),0))} baldes</b></div>`}).join('')||'<div class="empty">Cadastre uma tinta.</div>';renderHistory();renderReports();renderTintas()}
+function filteredRecords(){const t=$('filtroTinta').value,search=normalize($('buscaLote').value);return db.registros.filter(r=>(!t||r.tinta===t)&&(!search||normalize(r.lote).includes(search))).sort((a,b)=>b.data.localeCompare(a.data)||b.criadoEm.localeCompare(a.criadoEm))}
+function renderHistory(){const rec=filteredRecords();$('tabelaHistorico').innerHTML=rec.length?`<table><thead><tr><th>Tinta</th><th>Lote</th><th>Data</th><th class="num">Baldes</th><th class="no-print">Ações</th></tr></thead><tbody>${rec.map(r=>`<tr><td>${esc(r.tinta)}</td><td>${esc(r.lote)}</td><td>${esc(r.data)}</td><td class="num">${fmt(qtd(r))}</td><td class="no-print"><div class="record-btns"><button class="btn secondary sm" data-edit="${esc(r.id)}">Corrigir</button><button class="btn danger sm" data-del="${esc(r.id)}">Excluir</button></div></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum lote cadastrado neste filtro.</div>'}
+$('filtroTinta').addEventListener('change',renderHistory);$('buscaLote').addEventListener('input',renderHistory);
+$('tabelaHistorico').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const r=db.registros.find(x=>x.id===(b.dataset.edit||b.dataset.del));if(!r)return;if(b.dataset.del){if(confirm(`Excluir ${r.tinta} / lote ${r.lote}? Esta ação não pode ser desfeita sem backup.`)){db.registros=db.registros.filter(x=>x!==r);if(save())render()}return}const next=prompt(`Correção auditável do lote ${r.lote}: informe a quantidade final de baldes.`,r.quantidade);if(next===null)return;if(!/^\d+$/.test(next.trim())||!Number.isSafeInteger(Number(next))){alert('Informe um número inteiro não negativo.');return}const motivo=prompt('Motivo da correção (obrigatório):','Erro de leitura da foto');if(motivo===null)return;if(!motivo.trim()){alert('Informe um motivo para a correção.');return}r.alteracoes??=[];r.alteracoes.push({anterior:r.quantidade,novo:Number(next),motivo:motivo.trim(),em:new Date().toISOString()});r.quantidade=Number(next);if(save())render()});
+// Versão 1.1: recorte local, rotação e regras conservadoras para impedir leitura de números alheios à quantidade.
+const photoState={};
+function drawPhoto(kind,showSelection=true){
+  const st=photoState[kind];if(!st?.img)return;
+  const c=$('canvas'+kind),ctx=c.getContext('2d');const quarter=((st.rotation%4)+4)%4;
+  const sw=st.img.naturalWidth,sh=st.img.naturalHeight;
+  const iw=quarter%2?sh:sw,ih=quarter%2?sw:sh;
+  const scale=Math.min(1,900/Math.max(iw,ih)); c.width=Math.max(1,Math.round(iw*scale));c.height=Math.max(1,Math.round(ih*scale));
+  ctx.save();ctx.translate(c.width/2,c.height/2);ctx.rotate(quarter*Math.PI/2);
+  ctx.drawImage(st.img,-sw*scale/2,-sh*scale/2,sw*scale,sh*scale);ctx.restore();
+  if(showSelection&&st.rect){const r=st.rect;ctx.fillStyle='rgba(2,116,109,.12)';ctx.fillRect(r.x,r.y,r.w,r.h);ctx.strokeStyle='#e53b3b';ctx.lineWidth=3;ctx.strokeRect(r.x,r.y,r.w,r.h)}
+}
+function pointerXY(ev,c){const b=c.getBoundingClientRect();return {x:Math.max(0,Math.min(c.width,(ev.clientX-b.left)*c.width/b.width)),y:Math.max(0,Math.min(c.height,(ev.clientY-b.top)*c.height/b.height))}}
+function initPhoto(kind,fileId,statusId){
+ const input=$(fileId),canvas=$('canvas'+kind),st=photoState[kind]={img:null,rotation:0,rect:null,drag:null};
+ input.addEventListener('change',()=>{
+   if(kind==='Qtd')$('quantidade').value='';else $('lote').value='';
+   const file=input.files?.[0];st.rotation=0;st.rect=null;st.img=null;$('crop'+kind).style.display='none';$(statusId).textContent='';
+   if(!file)return;if(!file.type.startsWith('image/')){$(statusId).textContent='Selecione uma imagem.';return}
+   const url=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(url);st.img=im;$('crop'+kind).style.display='block';drawPhoto(kind);$(statusId).textContent='Imagem carregada. Use a leitura automática.'};im.onerror=()=>{URL.revokeObjectURL(url);$(statusId).textContent='Não foi possível abrir a imagem.'};im.src=url;
+ });
+ $('rot'+kind).onclick=()=>{st.rotation=(st.rotation+1)%4;st.rect=null;drawPhoto(kind)};
+ $('reset'+kind).onclick=()=>{st.rect=null;drawPhoto(kind)};
+ canvas.addEventListener('pointerdown',ev=>{if(!st.img)return;st.drag=pointerXY(ev,canvas);st.rect=null;canvas.setPointerCapture(ev.pointerId)});
+ canvas.addEventListener('pointermove',ev=>{if(!st.drag)return;const pos=pointerXY(ev,canvas);st.rect={x:Math.min(st.drag.x,pos.x),y:Math.min(st.drag.y,pos.y),w:Math.abs(pos.x-st.drag.x),h:Math.abs(pos.y-st.drag.y)};drawPhoto(kind)});
+ canvas.addEventListener('pointerup',()=>{st.drag=null;if(st.rect&&(st.rect.w<8||st.rect.h<8))st.rect=null;drawPhoto(kind)});
+ canvas.addEventListener('pointercancel',()=>{st.drag=null});
+}
+initPhoto('Lote','fotoLote','statusLote');initPhoto('Qtd','fotoQtd','statusQtd');
+function extractCanvas(kind){const source=$('canvas'+kind),r=photoState[kind]?.rect;if(!r||r.w<8||r.h<8)throw Error('Nenhuma área selecionada.');
+  drawPhoto(kind,false);const output=document.createElement('canvas'),factor=Math.max(1,Math.min(3,1300/Math.max(r.w,r.h)));output.width=Math.round(r.w*factor);output.height=Math.round(r.h*factor);
+  const ctx=output.getContext('2d',{willReadFrequently:true});ctx.drawImage(source,r.x,r.y,r.w,r.h,0,0,output.width,output.height);
+  const img=ctx.getImageData(0,0,output.width,output.height),d=img.data;for(let i=0;i<d.length;i+=4){const g=.299*d[i]+.587*d[i+1]+.114*d[i+2];const v=Math.max(0,Math.min(255,(g-110)*1.65+128));d[i]=d[i+1]=d[i+2]=v;}ctx.putImageData(img,0,0);drawPhoto(kind,true);return output;
+}
+let ocrWorker=null,ocrLock=false,paddlePromise=null;
+function loadScript(url){return new Promise((resolve,reject)=>{if(window.Tesseract){resolve();return}const el=document.createElement('script');el.src=url;el.onload=resolve;el.onerror=()=>reject(Error('Falha ao carregar biblioteca OCR. Verifique conexão.'));document.head.appendChild(el)})}
+async function getOCR(){if(!window.Tesseract)await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');if(!ocrWorker)ocrWorker=await Tesseract.createWorker('eng',1);return ocrWorker}
+async function getPaddle(){
+ if(!paddlePromise){
+  paddlePromise=(async()=>{
+    const {PaddleOCR}=await import('https://cdn.jsdelivr.net/npm/@paddleocr/paddleocr-js@0.4.2/+esm');
+    return PaddleOCR.create({lang:'en',ocrVersion:'PP-OCRv6',ortOptions:{backend:'wasm'}});
+  })().catch(e=>{paddlePromise=null;throw e});
+ }
+ return paddlePromise;
+}
+function originalCanvas(kind,rotation=0,scale=1){const st=photoState[kind];if(!st?.img)throw Error('Selecione uma fotografia.');const im=st.img,w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;const f=Math.min(1,1700/Math.max(w,h))*scale;const a=Math.max(1,Math.round(w*f)),b=Math.max(1,Math.round(h*f)),swap=rotation%2;const c=document.createElement('canvas');c.width=swap?b:a;c.height=swap?a:b;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.translate(c.width/2,c.height/2);ctx.rotate(rotation*Math.PI/2);ctx.drawImage(im,-a/2,-b/2,a,b);return c}
+function cloneRegion(c,x,y,w,h,up=2){x=Math.max(0,Math.floor(x));y=Math.max(0,Math.floor(y));w=Math.min(c.width-x,Math.max(1,Math.floor(w)));h=Math.min(c.height-y,Math.max(1,Math.floor(h)));const r=document.createElement('canvas');r.width=Math.min(1200,w*up);r.height=Math.min(600,h*up);r.getContext('2d').drawImage(c,x,y,w,h,0,0,r.width,r.height);return r}
+function lotsFrom(s){
+ const t=String(s).toUpperCase().replace(/[—–_]/g,'-').replace(/[|]/g,'1')
+   .replace(/(?<=\d)[., ]+(?=\d)/g,'').replace(/(?<=\d)\s*[-~]\s*(?=[A-Z])/g,'-');
+ const clean=t.replace(/\s+/g,'');
+ return [...clean.matchAll(/\d{7}-?[A-Z]{3}/g)]
+    .map(x=>x[0].replace(/^(\d{7})([A-Z]{3})$/,'$1-$2'));
+}
+function enhanced(c,mode='gray'){
+ const o=document.createElement('canvas');o.width=c.width;o.height=c.height;
+ const x=o.getContext('2d',{willReadFrequently:true});x.drawImage(c,0,0);
+ const d=x.getImageData(0,0,o.width,o.height);
+ for(let i=0;i<d.data.length;i+=4){
+  const g=.299*d.data[i]+.587*d.data[i+1]+.114*d.data[i+2];
+  let v=mode==='threshold'?(g<135?10:255):Math.max(0,Math.min(255,(g-120)*1.3+127));
+  d.data[i]=d.data[i+1]=d.data[i+2]=v;
+ }
+ x.putImageData(d,0,0);return o;
+}
+async function readLotAuto(){
+ const dest=$('statusLote');$('lote').value='';dest.textContent='Lendo lote impresso: ajustando orientação e contraste...';
+ const worker=await getOCR();let hints=[];
+ // A imagem de referência está 90° de lado. Testamos as quatro orientações, com OCR em duas segmentações.
+ for(const rot of [3,1,0,2]){
+  const c=originalCanvas('Lote',rot);const prepared=[enhanced(c),c];
+  for(const pic of prepared){
+   for(const psm of ['6','11']){
+    await worker.setParameters({tessedit_pageseg_mode:psm,tessedit_char_whitelist:''});
+    const r=await worker.recognize(pic);const candidates=lotsFrom(r.data.text);
+    if(candidates.length){
+     const found=candidates[0];$('lote').value=found;
+     dest.textContent='Lote sugerido: '+found+'. Confira antes de salvar.';
+     return true;
+    }
+    if(hints.length<2)hints.push(String(r.data.text||'').trim().slice(0,50));
+   }
+  }
+ }
+ dest.textContent='Lote não reconhecido com segurança. Confira e preencha manualmente.';
+ return false;
+}
+function parseTsv(tsv){return String(tsv||'').split('\n').slice(1).map(line=>{const a=line.split('\t');return {level:+a[0],left:+a[6],top:+a[7],width:+a[8],height:+a[9],conf:+a[10],text:(a.slice(11).join('\t')||'').trim()}}).filter(x=>x.level===5&&x.width>0&&x.height>0)}
+function detectQty(c,tsv){
+ // Fichas padronizadas: localizar a palavra "baldes" da mesma linha do valor;
+ // NÃO passar a ficha inteira ao modelo de manuscritos.
+ const words=parseTsv(tsv);
+ const a=words.filter(w=>/baldes|embalad|qtde|qtd/i.test(w.text));
+ if(a.length){
+  const item=a.find(w=>/baldes/i.test(w.text))||a.find(w=>/embalad/i.test(w.text))||a[0];
+  // Da posição da legenda até a coluna imediatamente à direita.
+  const y=item.top-Math.max(8,item.height*.25), h=Math.max(45,item.height*2.1);
+  const x=Math.min(c.width*.78,Math.max(c.width*.51,item.left+item.width+12));
+  if(x<c.width*.85) return {x,y,w:Math.min(c.width*.32,c.width-x-12),h,method:'rótulo Qtde embalada'};
+ }
+ // Posição medida nas fotografias de exemplo. É uma aproximação para a MESMA ficha/enquadramento.
+ return {x:c.width*.575,y:c.height*.237,w:c.width*.27,h:c.height*.046,method:'posição padrão desta ficha'};
+}
+function qtyCandidates(c,tsv){
+ const r=detectQty(c,tsv);
+ // Duas variações pequenas: algumas fotos têm margens diferentes.
+ return [r,{...r,x:Math.max(0,r.x-r.w*.08),y:Math.max(0,r.y-r.h*.1),w:r.w*1.12,h:r.h*1.16,method:r.method+' (margem)'}];
+}
+function showCropPreview(kind,c){
+ const st=$('status'+kind);let im=document.getElementById('preview'+kind);
+ if(!im){im=document.createElement('img');im.id='preview'+kind;im.alt='Recorte identificado automaticamente';im.style='display:block;max-width:100%;max-height:115px;object-fit:contain;margin:8px 0;border:1px solid #ccc;background:#eee';st.insertAdjacentElement('afterend',im)}
+ im.src=c.toDataURL('image/png');
+}
+function removeGridLines(c){const ctx=c.getContext('2d',{willReadFrequently:true}),o=ctx.getImageData(0,0,c.width,c.height),d=o.data,w=c.width,h=c.height;for(let y=0;y<h;y++){let dark=0;for(let x=0;x<w;x++){const i=(y*w+x)*4;if(d[i]<95&&d[i+1]<105&&d[i+2]<130)dark++}if(dark/w>.65){for(let yy=Math.max(0,y-1);yy<=Math.min(h-1,y+1);yy++)for(let x=0;x<w;x++){const i=(yy*w+x)*4;d[i]=d[i+1]=d[i+2]=245}}}ctx.putImageData(o,0,0);return c}
+// PaddleOCR v6 (modelo pequeno, no navegador). Evita hallucinações do TrOCR em dígitos isolados.
+function digitsFromPaddle(result){
+ const items=(result?.[0]?.items||[]).map(i=>({text:String(i.text||'').trim(),score:Number(i.score)||0}));
+ // Só aceitar um único inteiro de 1 a 5 dígitos, sem letras ou outras palavras.
+ const exact=items.filter(i=>/^\d{1,5}$/.test(i.text)&&i.score>=0.65);
+ return {items,valid:exact.length===1?String(Number(exact[0].text)):null};
+}
+async function readQtyAuto(){
+ const dest=$('statusQtd');$('quantidade').value='';dest.textContent='Localizando a célula de quantidade...';
+ const worker=await getOCR(),c=originalCanvas('Qtd');
+ await worker.setParameters({tessedit_pageseg_mode:'11',tessedit_char_whitelist:''});
+ const rec=await worker.recognize(c,{}, {tsv:true});
+ const regions=qtyCandidates(c,rec.data.tsv||'');
+ // Primeiro recorte é usado como referência visual; segundo dá tolerância à margem.
+ const crops=regions.map(r=>removeGridLines(cloneRegion(c,r.x,r.y,r.w,r.h,3)));
+ showCropPreview('Qtd',crops[0]);
+ dest.textContent='Campo localizado. Carregando PaddleOCR v6 (primeira utilização pode demorar)...';
+ const model=await getPaddle();const readings=[];
+ for(let i=0;i<crops.length;i++){
+  dest.textContent='Interpretando recorte '+(i+1)+' de '+crops.length+' com PaddleOCR...';
+  const out=await model.predict(crops[i]);
+  readings.push(digitsFromPaddle(out));
+ }
+ const accepted=readings[0].valid&&readings[0].valid===readings[1].valid&&Number(readings[0].valid)>0;
+ if(accepted){
+   $('quantidade').value=readings[0].valid;
+   dest.textContent='Quantidade sugerida pela IA: '+readings[0].valid+'. Confira visualmente antes de confirmar o lote.';
+   return true;
+ }
+ const preview=readings.map(x=>x.items.map(i=>i.text+' ('+Math.round(i.score*100)+'%)').join(', ')||'sem texto').join(' / ');
+ dest.textContent='Leitura manuscrita ainda inconclusiva: '+preview.slice(0,180)+'. Verifique a imagem e digite a quantidade; não houve registro automático.';
+ return false;
+}
+
+async function executeAuto(kind){if(ocrLock)return;ocrLock=true;const status=$(kind==='Lote'?'statusLote':'statusQtd');try{if(kind==='Lote')await readLotAuto();else await readQtyAuto()}catch(e){status.textContent='Falha na leitura local: '+e.message+'. Preencha manualmente.'}finally{ocrLock=false}}
+$('lerLote').onclick=()=>executeAuto('Lote');$('lerQtd').onclick=()=>executeAuto('Qtd');$('lerAmbas').onclick=async()=>{if(ocrLock)return;ocrLock=true;try{if(!photoState.Lote.img||!photoState.Qtd.img){alert('Carregue primeiro as duas fotografias.');return}try{await readLotAuto()}catch(e){$('statusLote').textContent='Falha lote: '+e.message}try{await readQtyAuto()}catch(e){$('statusQtd').textContent='Falha quantidade: '+e.message}}finally{ocrLock=false}};
+function alertReg(msg,error=false){$('alertaRegistro').hidden=false;$('alertaRegistro').className='notice '+(error?'error':'');$('alertaRegistro').textContent=msg}
+function clearReg(){$('lote').value='';$('quantidade').value='';$('dataProducao').value=today();['Lote','Qtd'].forEach(k=>{photoState[k].img=null;photoState[k].rect=null;photoState[k].rotation=0;$('crop'+k).style.display='none'});$('fotoLote').value='';$('fotoQtd').value='';$('statusLote').textContent='';$('statusQtd').textContent='';$('alertaRegistro').hidden=true}
+$('limpar').onclick=clearReg;$('salvar').onclick=()=>{const tinta=$('tinta').value,lote=$('lote').value.trim(),n=$('quantidade').value.trim(),data=$('dataProducao').value;if(!tinta||!lote||!data){alertReg('Preencha tinta, lote e data.',true);return}if(!/^\d+$/.test(n)||!Number.isSafeInteger(Number(n))){alertReg('Quantidade deve ser um número inteiro maior ou igual a zero.',true);return}if(db.registros.some(r=>same(r,tinta,lote))){alertReg(`LOTE DUPLICADO: ${tinta} / ${lote} já existe. Nenhuma soma foi efetuada. Abra Histórico > Corrigir para ajustar o valor existente.`,true);return}if(!confirm(`Confirmar registro?\n${tinta}\nLote: ${lote}\nBaldes: ${n}\nData: ${data}\n\nUm lote só pode ser cadastrado uma vez por tinta.`))return;db.registros.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),tinta,lote,quantidade:Number(n),data,criadoEm:new Date().toISOString(),alteracoes:[]});if(save()){render();clearReg();show('painel');alert('Lote salvo com sucesso.')}};
+function reportRecords(){const t=$('relTinta').value,a=$('relInicio').value,b=$('relFim').value;return db.registros.filter(r=>(!t||r.tinta===t)&&(!a||r.data>=a)&&(!b||r.data<=b)).sort((x,y)=>x.tinta.localeCompare(y.tinta)||x.data.localeCompare(y.data)||x.lote.localeCompare(y.lote))}
+function renderReports(){const rs=reportRecords(),total=rs.reduce((s,r)=>s+qtd(r),0),selected=$('relTinta').value;$('relTitulo').textContent=selected?`Relatório — ${selected}`:'Relatório geral de produção';$('relPeriodo').textContent=`Período: ${$('relInicio').value||'início'} até ${$('relFim').value||'atual'} · Emitido em ${new Date().toLocaleString('pt-BR')}`;let by=db.tintas.filter(t=>!selected||t===selected).map(t=>{const sub=rs.filter(r=>r.tinta===t);return `<tr><td>${esc(t)}</td><td class="num">${sub.length}</td><td class="num"><b>${fmt(sub.reduce((s,r)=>s+qtd(r),0))}</b></td></tr>`}).join('');$('relResumo').innerHTML=`<p><b>${fmt(total)} baldes embalados</b> em ${rs.length} lote(s).</p><table><thead><tr><th>Tinta</th><th class="num">Lotes</th><th class="num">Baldes</th></tr></thead><tbody>${by}<tr><td><b>Total</b></td><td class="num"><b>${rs.length}</b></td><td class="num"><b>${fmt(total)}</b></td></tr></tbody></table>`;$('relTabela').innerHTML=rs.length?`<h3 style="margin-top:22px">Detalhamento por lote</h3><table><thead><tr><th>Tinta</th><th>Lote</th><th>Data</th><th class="num">Baldes</th></tr></thead><tbody>${rs.map(r=>`<tr><td>${esc(r.tinta)}</td><td>${esc(r.lote)}</td><td>${esc(r.data)}</td><td class="num">${fmt(qtd(r))}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">Nenhum lote para os filtros selecionados.</p>'}
+['relTinta','relInicio','relFim'].forEach(id=>$(id).addEventListener('change',renderReports));$('imprimir').onclick=()=>{show('relatorios');window.print()};
+function download(filename,content,mime){const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+const csvCell=x=>'"'+String(x).replace(/"/g,'""')+'"';$('exportarCsv').onclick=()=>{const rs=reportRecords();const rows=[['Tinta','Lote','Data','Baldes embalados'],...rs.map(r=>[r.tinta,r.lote,r.data,r.quantidade])];const summary=[[],['RESUMO','Lotes','Baldes'],...db.tintas.filter(t=>!$('relTinta').value||t===$('relTinta').value).map(t=>{const a=rs.filter(r=>r.tinta===t);return[t,a.length,a.reduce((s,r)=>s+qtd(r),0)]}),['TOTAL',rs.length,rs.reduce((s,r)=>s+qtd(r),0)]];download(`relatorio-tintas-${today()}.csv`,'\ufeff'+[...rows,...summary].map(row=>row.map(csvCell).join(';')).join('\r\n'),'text/csv;charset=utf-8')};
+function renderTintas(){$('listaTintas').innerHTML=db.tintas.map(t=>`<div class="section-header" style="border-bottom:1px solid var(--line);padding:10px 0"><b>${esc(t)}</b><button class="btn danger sm" data-remtinta="${esc(t)}">Excluir</button></div>`).join('')}
+$('listaTintas').addEventListener('click',e=>{const t=e.target.closest('[data-remtinta]')?.dataset.remtinta;if(!t)return;if(db.registros.some(r=>r.tinta===t)){alert('Não é possível excluir uma tinta com lotes registrados.');return}if(confirm(`Remover a categoria ${t}?`)){db.tintas=db.tintas.filter(x=>x!==t);if(save())render()}});
+$('adicionarTinta').onclick=()=>{const t=$('novaTinta').value.trim();if(!t){alert('Digite o nome da tinta.');return}if(db.tintas.some(x=>normalize(x)===normalize(t))){alert('Esta tinta já está cadastrada.');return}db.tintas.push(t);if(save()){$('novaTinta').value='';render()}};
+$('backup').onclick=()=>download(`backup-controle-tintas-${today()}.json`,JSON.stringify({versao:1,exportadoEm:new Date().toISOString(),...db},null,2),'application/json');
+$('restaurar').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.tintas)||!Array.isArray(d.registros))throw Error('Formato inválido');if(d.tintas.some(t=>typeof t!=='string'||!t.trim())||d.registros.some(r=>typeof r.tinta!=='string'||typeof r.lote!=='string'||!r.lote.trim()||!d.tintas.includes(r.tinta)||!Number.isSafeInteger(Number(r.quantidade))||Number(r.quantidade)<0||!/^\d{4}-\d{2}-\d{2}$/.test(r.data)))throw Error('Dados inválidos');const keys=d.registros.map(r=>lotKey(r.tinta,r.lote));if(new Set(keys).size!==keys.length)throw Error('Backup contém lotes duplicados');if(!confirm(`Substituir TODOS os dados deste dispositivo por ${d.registros.length} lotes do backup? Faça backup dos dados atuais antes.`))return;db={tintas:d.tintas,registros:d.registros};if(save()){render();alert('Backup restaurado.')}}catch(ex){alert('Falha ao restaurar: '+ex.message)}finally{e.target.value=''}};
+$('dataProducao').value=today();render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
